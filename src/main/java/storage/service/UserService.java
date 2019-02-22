@@ -7,6 +7,5 @@ public interface UserService {
 
     User findByEmail(String email);
 
-    User createUser(User user);
-
+    User createUser(String json);
 }

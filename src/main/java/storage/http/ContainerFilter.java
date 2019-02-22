@@ -1,6 +1,5 @@
 package storage.http;
 
-import storage.exceptions.HttpServiceException;
 import storage.http.container.Body;
 import storage.http.container.FilterBefore;
 import storage.http.container.Patches;
