@@ -5,17 +5,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import storage.http.FilterUtils;
-import storage.http.Requests;
-import storage.http.SessionContext;
-import storage.http.SessionContextManager;
-import storage.http.Token;
 import storage.controller.UserController;
 import storage.filter.Filter;
 import storage.http.ContainerFilter;
 import storage.http.HttpRequest;
 import storage.http.HttpResponse;
 import storage.http.HttpStatusCode;
+import storage.http.SessionContext;
+import storage.http.SessionContextManager;
+import storage.http.Token;
 import storage.http.container.HttpMethod;
 import storage.http.container.HttpService;
 import storage.http.container.filter.FilterChain;
@@ -43,6 +41,10 @@ public class FilterTest {
     public LoginService loginService;
     @Mock
     public HttpRequest request;
+    @Mock
+    public SessionContextManager sessionManager;
+    @Mock
+    public FilterChain filterChain;
 
     @Test
     public void authFilterTest() throws Exception {
@@ -83,8 +85,6 @@ public class FilterTest {
     public void authorizationFilterTest() throws Exception {
         HttpService httpService = HttpService.getInstance();
 
-        SessionContextManager sessionManager = SessionContextManager.getSessionManager();
-
         httpService.filterBefore((request, response) -> {
             SessionContext sessionContext = sessionManager.get(request.getRequestedSessionId());
             boolean isLoginUri = request.getUri().equals("/login");
@@ -119,6 +119,12 @@ public class FilterTest {
             request.setAttribute("context", sessionContext);
         };
 
+        SessionContext sessionContextAfterLogin = new SessionContext(
+                new Token(), "123", "root", "root@mail.com", UserType.PRO
+        );
+
+        when(sessionManager.get(any())).thenReturn(sessionContextAfterLogin);
+
         httpService.filterBefore(SECURED_PATH, (request, response) -> {
             SessionContext sessionContext = sessionManager.get("context");
             UserType userType = sessionContext.getUserType();
@@ -136,7 +142,7 @@ public class FilterTest {
         when(request.getHttpMethod()).thenReturn(HttpMethod.POST);
         when(userService.createUser(any())).thenReturn(createdUser);
 
-        containerFilter.doFilter(request, new HttpResponse(), new FilterChain());
+        containerFilter.doFilter(request, new HttpResponse(), filterChain);
 
     }
 }
