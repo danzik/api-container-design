@@ -21,7 +21,7 @@ public class SessionContextManager {
         SessionContext sessionContext = null;
         String sessionTokenAsString = attributes.get(token);
         if (sessionTokenAsString != null) {
-            sessionContext = new GsonConverter().fromJson(sessionTokenAsString, SessionContext.class);
+            sessionContext = GsonConverter.fromJson(sessionTokenAsString, SessionContext.class);
         }
         return sessionContext;
     }

@@ -26,7 +26,7 @@ public class UserController {
 
     private ResponseWrapper<User> createUser(RequestWrapper request, ResponseWrapper<User> response) {
         String userBody = request.getBody();
-        User user = new GsonConverter().fromJson(userBody, User.class);
+        User user = GsonConverter.fromJson(userBody, User.class);
         User newUser = userService.createUser(user);
         response.body(newUser);
         response.setStatus(HttpStatusCode.CREATED);
