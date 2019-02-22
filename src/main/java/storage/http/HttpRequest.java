@@ -1,6 +1,7 @@
 package storage.http;
 
 import storage.http.container.HttpMethod;
+import storage.http.container.HttpSession;
 
 import java.util.Map;
 
@@ -28,5 +29,9 @@ public class HttpRequest {
 
     public Map<String, String> getParams() {
         return params;
+    }
+
+    public HttpSession getSession() {
+        return new HttpSession();
     }
 }

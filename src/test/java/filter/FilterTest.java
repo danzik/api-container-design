@@ -16,6 +16,7 @@ import storage.http.SessionContextManager;
 import storage.http.Token;
 import storage.http.container.HttpMethod;
 import storage.http.container.HttpService;
+import storage.http.container.HttpSession;
 import storage.http.container.filter.FilterChain;
 import storage.model.LoginResponse;
 import storage.model.User;
@@ -33,7 +34,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class FilterTest {
 
-    public final String SECURED_PATH = "/users/:email";
+    public final String SECURED_PATH = "/users/1";
 
     @Mock
     public UserService userService;
@@ -50,7 +51,7 @@ public class FilterTest {
     public void authFilterTest() throws Exception {
         HttpService httpService = HttpService.getInstance();
 
-        Filter<LoginResponse> loginFilter = (request, response) -> {
+        Filter loginFilter = (request, response) -> {
             String userName = request.getParam("userName");
             String password = request.getParam("password");
             if (!userName.isEmpty() && !password.isEmpty()) {
@@ -81,19 +82,26 @@ public class FilterTest {
     }
 
     @Test
-    @Disabled
     public void authorizationFilterTest() throws Exception {
         HttpService httpService = HttpService.getInstance();
 
-        httpService.filterBefore((request, response) -> {
-            SessionContext sessionContext = sessionManager.get(request.getRequestedSessionId());
-            boolean isLoginUri = request.getUri().equals("/login");
-            if (sessionContext == null && isLoginUri) {
-                HttpService.finish(HttpStatusCode.FORBIDDEN, "Access is denied");
-            }
-        });
+        Token sessionToken = new Token(System.currentTimeMillis() + 5000, "accessToken", "refreshToken");
+        SessionContext sessionContextAfterLogin = new SessionContext(
+                sessionToken, "123", "root", "root@mail.com", UserType.PRO
+        );
 
-        Filter<Void> authFilter = (request, response) -> {
+        User createdUser = new User();
+        HttpSession httpSession = new HttpSession();
+        httpSession.setAttribute("user", createdUser);
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "Bearer 234q3fadsf2341dsfs");
+        when(request.getHeaders()).thenReturn(headers);
+        when(request.getRequestURI()).thenReturn(SECURED_PATH);
+        when(request.getHttpMethod()).thenReturn(HttpMethod.GET);
+        when(request.getSession()).thenReturn(new HttpSession());
+        when(sessionManager.get(any())).thenReturn(sessionContextAfterLogin);
+
+        Filter authFilter = (request, response) -> {
             String authorizationValue = request.getHeaders("Authorization");
 
             if (authorizationValue == null || !authorizationValue.startsWith("Bearer ")) {
@@ -119,11 +127,7 @@ public class FilterTest {
             request.setAttribute("context", sessionContext);
         };
 
-        SessionContext sessionContextAfterLogin = new SessionContext(
-                new Token(), "123", "root", "root@mail.com", UserType.PRO
-        );
-
-        when(sessionManager.get(any())).thenReturn(sessionContextAfterLogin);
+        httpService.filterBefore(authFilter);
 
         httpService.filterBefore(SECURED_PATH, (request, response) -> {
             SessionContext sessionContext = sessionManager.get("context");
@@ -133,15 +137,9 @@ public class FilterTest {
             }
         });
 
-        ContainerFilter containerFilter = new ContainerFilter(httpService.getRequests());
-
         UserController userController = new UserController(userService, httpService);
-        User createdUser = new User();
 
-        when(request.getRequestURI()).thenReturn("/user/1");
-        when(request.getHttpMethod()).thenReturn(HttpMethod.POST);
-        when(userService.createUser(any())).thenReturn(createdUser);
-
+        ContainerFilter containerFilter = new ContainerFilter(httpService.getRequests());
         containerFilter.doFilter(request, new HttpResponse(), filterChain);
 
     }

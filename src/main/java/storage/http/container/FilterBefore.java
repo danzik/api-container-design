@@ -1,6 +1,5 @@
 package storage.http.container;
 
-
 import storage.filter.FilterImpl;
 
 import java.util.List;
@@ -11,8 +10,19 @@ public class FilterBefore {
         List<PatchMatcher> filters = requestContext.getRequests().findFilters(HttpMethod.BEFORE, requestContext.getUri());
 
         for (PatchMatcher filter : filters) {
-            FilterImpl filterImpl = (FilterImpl)filter.getTarget();
-            filterImpl.handle(requestContext.getRequestWrapper(), requestContext.getResponseWrapper());
+            Object target = filter.getTarget();
+            if (target instanceof FilterImpl) {
+                FilterImpl filterImpl = (FilterImpl) target;
+
+                RequestWrapper requestWrapper = requestContext.getRequestWrapper();
+                requestWrapper.setUri(filter.getRequestURI());
+                requestWrapper.setParams(requestContext.getParams());
+                requestWrapper.setSession(requestContext.getSession());
+                requestWrapper.setHeaders(requestContext.getHeaders());
+
+                filterImpl.handle(requestContext.getRequestWrapper(), requestContext.getResponseWrapper());
+            }
         }
+
     }
 }

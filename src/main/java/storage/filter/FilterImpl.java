@@ -3,7 +3,7 @@ package storage.filter;
 import storage.http.container.RequestWrapper;
 import storage.http.container.ResponseWrapper;
 
-public abstract class FilterImpl<T> implements Filter<T> {
+public abstract class FilterImpl implements Filter {
     private String path;
     private String acceptType;
 
@@ -18,18 +18,18 @@ public abstract class FilterImpl<T> implements Filter<T> {
         this(path, acceptType);
     }
 
-    public static <T> FilterImpl<T> create(final String path, final Filter<T> filter) {
+    public static FilterImpl create(final String path, final Filter filter) {
         return create(path, filter, DEFAULT_PATH);
     }
 
-    public static <T> FilterImpl<T> create(final String path, final Filter<T> filter, String acceptType) {
+    public static FilterImpl create(final String path, final Filter filter, String acceptType) {
         if (acceptType == null) {
             acceptType = DEFAULT_PATH;
         }
 
-        return new FilterImpl<T>(path, acceptType, filter) {
+        return new FilterImpl(path, acceptType, filter) {
             @Override
-            public void handle(RequestWrapper request, ResponseWrapper<T> response) throws Exception {
+            public void handle(RequestWrapper request, ResponseWrapper response) throws Exception {
                 filter.handle(request, response);
             }
         };

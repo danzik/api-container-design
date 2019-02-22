@@ -1,11 +1,13 @@
 package storage.http;
 
+import storage.exceptions.HttpServiceException;
 import storage.http.container.Body;
 import storage.http.container.FilterBefore;
 import storage.http.container.Patches;
 import storage.http.container.RequestContext;
 import storage.http.container.RequestWrapper;
 import storage.http.container.ResponseWrapper;
+import storage.http.container.ServiceExceptionUtils;
 import storage.http.container.filter.Filter;
 import storage.http.container.filter.FilterChain;
 import storage.http.container.filter.FilterConfig;
@@ -28,18 +30,22 @@ public class ContainerFilter implements Filter {
         ResponseWrapper responseWrapper = ResponseWrapper.create();
 
         RequestContext requestContext = RequestContext.create()
-                .withBody(body)
-                .withUri(request.getRequestURI())
-                .withRequests(requests)
-                .withResponseWrapper(responseWrapper)
                 .withRequestWrapper(requestWrapper)
+                .withResponseWrapper(responseWrapper)
+                .withBody(body)
+                .withRequests(requests)
                 .withParams(request.getParams())
-                .withHttpMethod(request.getHttpMethod());
+                .withUri(request.getRequestURI())
+                .withHttpMethod(request.getHttpMethod())
+                .withSession(request.getSession())
+                .withHeaders(request.getHeaders());
         try {
             FilterBefore.doFilter(requestContext);
             Patches.execute(requestContext);
-        } catch (Exception serviceException) {
-            throw serviceException;
+        } catch (HttpServiceException serviceException) {
+            ServiceExceptionUtils.modifyResponse(response, serviceException);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
         }
 
         if (filterChain != null) {

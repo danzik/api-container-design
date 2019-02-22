@@ -1,6 +1,5 @@
 package storage.controller;
 
-import storage.GsonConverter;
 import storage.http.HttpStatusCode;
 import storage.http.container.HttpService;
 import storage.http.container.RequestWrapper;
@@ -14,12 +13,12 @@ public class UserController {
     public UserController(UserService userService, HttpService http) {
         this.userService = userService;
         http.post("/users", this::createUser);
-        http.get("/users/:email", this::findUserByEmail);
+        http.get("/users/:id", this::findUserById);
     }
 
-    private ResponseWrapper<User> findUserByEmail(RequestWrapper request, ResponseWrapper<User> response) {
-        String email = request.getParam(":email");
-        User user = userService.findByEmail(email);
+    private ResponseWrapper<User> findUserById(RequestWrapper request, ResponseWrapper<User> response) {
+        String id = request.getParam(":id");
+        User user = userService.findUserById(id);
         response.body(user);
         return response;
     }

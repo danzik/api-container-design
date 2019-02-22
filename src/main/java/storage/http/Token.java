@@ -5,6 +5,14 @@ public class Token {
     private String accessToken;
     private String refreshToken;
 
+    public Token() {}
+
+    public Token(Long expireTime, String accessToken, String refreshToken) {
+        this.expireTime = expireTime;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+    }
+
     public Long getExpireTime() {
         return expireTime;
     }

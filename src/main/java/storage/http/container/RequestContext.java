@@ -9,8 +9,10 @@ public class RequestContext {
     private String uri;
     private String acceptType;
     private Requests requests;
-    private Requests routeMatcher;
+    private HttpSession session;
     private HttpMethod httpMethod;
+    private Map<String, String> params;
+    private Map<String, String> headers;
     private RequestWrapper requestWrapper;
     private ResponseWrapper responseWrapper;
 
@@ -36,10 +38,6 @@ public class RequestContext {
     public RequestContext withHttpMethod(HttpMethod httpMethod) {
         this.httpMethod = httpMethod;
         return this;
-    }
-
-    public Requests getRouteMatcher() {
-        return routeMatcher;
     }
 
     public String getUri() {
@@ -86,7 +84,29 @@ public class RequestContext {
     }
 
     public RequestContext withParams(Map<String, String> params) {
-        requestWrapper.setParams(params);
+        this.params = params;
         return this;
+    }
+
+    public RequestContext withHeaders(Map<String, String> headers) {
+        this.headers = headers;
+        return this;
+    }
+
+    public RequestContext withSession(HttpSession session) {
+        this.session = session;
+        return this;
+    }
+
+    public HttpSession getSession() {
+        return session;
+    }
+
+    public Map<String, String> getParams() {
+        return params;
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
     }
 }
