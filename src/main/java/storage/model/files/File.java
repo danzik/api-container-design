@@ -1,15 +1,18 @@
-package storage.model;
+package storage.model.files;
 
 import java.time.LocalDateTime;
 
-public class File {
-    private String id;
+public class File extends Metadata {
     private Long size;
-    private String name;
     private String description;
     private String originalFileName;
+    private FilePermission permission;
     private LocalDateTime createdTime;
     private String lastModifyingUserId;
+
+    public File(String name, String pathDisplay) {
+        super(name, pathDisplay);
+    }
 
     public String getId() {
         return id;

@@ -1,6 +1,6 @@
 package storage.repository.impl;
 
-import storage.model.File;
+import storage.model.files.File;
 import storage.repository.FileStorageRepository;
 
 import java.io.InputStream;

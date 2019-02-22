@@ -1,6 +1,6 @@
 package storage.service;
 
-import storage.model.File;
+import storage.model.files.File;
 
 import java.io.InputStream;
 

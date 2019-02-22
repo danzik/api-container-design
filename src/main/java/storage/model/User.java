@@ -1,14 +1,20 @@
 package storage.model;
 
+import storage.model.files.File;
+
 import java.util.Objects;
+import java.util.Set;
 
 public class User {
     private int age;
     private String email;
     private String password;
     private String lastName;
+    private Set<File> files;
     private String firstName;
+    private boolean disabled;
     private UserType userType;
+    private String profilePhotoUrl;
 
     public int getAge() {
         return age;
@@ -32,6 +38,14 @@ public class User {
 
     public UserType getUserType() {
         return userType;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public String getProfilePhotoUrl() {
+        return profilePhotoUrl;
     }
 
     @Override

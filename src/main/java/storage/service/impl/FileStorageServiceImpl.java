@@ -1,6 +1,6 @@
 package storage.service.impl;
 
-import storage.model.File;
+import storage.model.files.File;
 import storage.repository.FileStorageRepository;
 import storage.service.FileStorageService;
 

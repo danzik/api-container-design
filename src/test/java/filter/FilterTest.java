@@ -122,7 +122,7 @@ public class FilterTest {
         httpService.filterBefore(SECURED_PATH, (request, response) -> {
             SessionContext sessionContext = sessionManager.get("context");
             UserType userType = sessionContext.getUserType();
-            if (userType != UserType.ADMIN) {
+            if (userType != UserType.PRO) {
                 HttpService.finish(HttpStatusCode.FORBIDDEN, "Access is denied");
             }
         });

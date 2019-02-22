@@ -5,7 +5,7 @@ import storage.http.HttpStatusCode;
 import storage.http.container.HttpService;
 import storage.http.container.RequestWrapper;
 import storage.http.container.ResponseWrapper;
-import storage.model.File;
+import storage.model.files.File;
 import storage.service.FileStorageService;
 
 import java.io.InputStream;
