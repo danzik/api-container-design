@@ -1,6 +1,7 @@
 package storage.service.impl;
 
 import storage.model.files.File;
+import storage.model.files.Folder;
 import storage.repository.FileStorageRepository;
 import storage.service.FileStorageService;
 
@@ -16,6 +17,11 @@ public class FileStorageServiceImpl implements FileStorageService {
     @Override
     public void uploadFile(String userId, InputStream fileInputStream) {
         fileStorageRepository.uploadFile(userId, fileInputStream);
+    }
+
+    @Override
+    public Folder createFolder(String folderJsonFormat) {
+        return null;
     }
 
     @Override

@@ -12,6 +12,7 @@ public class UserController {
 
     public UserController(UserService userService, HttpService http) {
         this.userService = userService;
+        http.put("/users", this::updateUser);
         http.post("/users", this::createUser);
         http.get("/users/:id", this::findUserById);
     }
@@ -28,6 +29,13 @@ public class UserController {
         User newUser = userService.createUser(userJsonModel);
         response.body(newUser);
         response.setStatus(HttpStatusCode.CREATED);
+        return response;
+    }
+
+    private ResponseWrapper<User> updateUser(RequestWrapper request, ResponseWrapper<User> response) {
+        String userJsonModel = request.getBody();
+        User newUser = userService.update(userJsonModel);
+        response.body(newUser);
         return response;
     }
 

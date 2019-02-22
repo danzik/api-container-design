@@ -10,4 +10,6 @@ public interface UserService {
     User createUser(String json);
 
     User findUserById(String id);
+
+    User update(String userJsonModel);
 }

@@ -6,6 +6,7 @@ import storage.http.container.HttpService;
 import storage.http.container.RequestWrapper;
 import storage.http.container.ResponseWrapper;
 import storage.model.files.File;
+import storage.model.files.Folder;
 import storage.service.FileStorageService;
 
 import java.io.InputStream;
@@ -17,6 +18,7 @@ public class FileStorageController {
     public FileStorageController(FileStorageService fileStorageService, HttpService http) {
         this.fileStorageService = fileStorageService;
         http.post("/drive/files/", this::uploadFile);
+        http.post("/drive/folder/", this::createFolder);
         http.put("/drive/files/:fileId", this::updateFile);
         http.delete("/drive/files/:fileId", this::deleteFile);
         http.get("/drive/files/:fileName", this::downloadFile);
@@ -50,6 +52,17 @@ public class FileStorageController {
         String fileName = request.getParam("fileName");
         File file = fileStorageService.loadByFileName(fileName);
         response.setBody(file);
+        return response;
+    }
+
+    private ResponseWrapper<Folder> createFolder(RequestWrapper request, ResponseWrapper<Folder> response) {
+        String folderJsonFormat = request.getBody();
+        try {
+            Folder folder = fileStorageService.createFolder(folderJsonFormat);
+            response.setBody(folder);
+        } catch (Exception ex) {
+            response.setStatus(HttpStatusCode.INTERNAL_ERROR);
+        }
         return response;
     }
 }
