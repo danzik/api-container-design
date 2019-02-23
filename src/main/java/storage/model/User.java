@@ -15,7 +15,7 @@ public class User {
     private String firstName;
     private boolean disabled;
     private UserType userType;
-    private List<Folder> folders;
+    private Set<Folder> folders;
     private Set<File> sharedFiles;
     private String profilePhotoUrl;
 

@@ -1,9 +1,14 @@
 package storage.model.files;
 
+import storage.model.User;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class File extends Metadata {
     private Long size;
+    private List<User> users;
+    private String sharedLink;
     private String description;
     private String originalFileName;
     private FilePermission permission;
